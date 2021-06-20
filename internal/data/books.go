@@ -1,31 +1,38 @@
 package data
 
 import (
+	"github.com/Bug-daulet/FinalSPA/internal/validator"
 	"time"
 )
 
 type Book struct {
-	ID        	int64		`json:"id"`
-	CreatedAt 	time.Time	`json:"-"`
-	Title     	string		`json:"title"`
-	Year      	int32		`json:"year,omitempty"`
-	Pages     	Pages     	`json:"pages,omitempty"`
-	Genres		[]string	`json:"genres,omitempty"`
-	Version   	int32     	`json:"version"`
+	ID        int64     `json:"id"`
+	CreatedAt time.Time `json:"-"`
+	Title     string    `json:"title"`
+	Year      int32     `json:"year,omitempty"`
+	Pages     Pages     `json:"pages,omitempty"`
+	Genres    []string  `json:"genres,omitempty"`
+	Version   int32     `json:"version"`
 }
 
-//func ValidateComics(v *validator.Validator, comics *Comics) {
-//	v.Check(comics.Title != "", "title", "must be provided")
-//	v.Check(len(comics.Title) <= 500, "title", "must not be more than 500 bytes long")
-//
-//	v.Check(comics.Year != 0, "year", "must be provided")
-//	v.Check(comics.Year >= 1888, "year", "must be greater than 1888")
-//	v.Check(comics.Year <= int32(time.Now().Year()), "year", "must not be in the future")
-//
-//	v.Check(comics.Pages != 0, "pages", "must be provided")
-//	v.Check(comics.Pages > 0, "pages", "must be a positive integer")
-//
-//}
+func ValidateBooks(v *validator.Validator, input *Book) {
+	v.Check(input.Title != "", "title", "must be provided")
+	v.Check(len(input.Title) <= 500, "title", "must not be more than 500 bytes long")
+
+	v.Check(input.Year != 0, "year", "must be provided")
+	v.Check(input.Year >= 1888, "year", "must be greater than 1888")
+	v.Check(input.Year <= int32(time.Now().Year()), "year", "must not be in the future")
+
+	v.Check(input.Pages != 0, "pages", "must be provided")
+	v.Check(input.Pages > 0, "pages", "must be a positive integer")
+
+	v.Check(input.Genres != nil, "genres", "must be provided")
+	v.Check(len(input.Genres) >= 1, "genres", "must contain at least 1 genre")
+	v.Check(len(input.Genres) <= 5, "genres", "must not contain more than 5 genres")
+
+	v.Check(validator.Unique(input.Genres), "genres", "must not contain duplicate values")
+}
+
 //
 //type ComicsModel struct {
 //	DB *sql.DB

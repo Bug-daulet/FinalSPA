@@ -1,26 +1,51 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Bug-daulet/FinalSPA/internal/data"
+	"github.com/Bug-daulet/FinalSPA/internal/validator"
 	"net/http"
 	"time"
 )
 
-
 func (app *application) createBookHandler(w http.ResponseWriter, r *http.Request) {
 
-	//var input struct {
-	//	Title string     `json:"title"`
-	//	Year  int32      `json:"year"`
-	//	Pages data.Pages `json:"pages"`
-	//}
-	//
-	//err := app.readJSON(w, r, &input)
-	//if err != nil {
-	//	app.badRequestResponse(w, r, err)
-	//	return
-	//}
+	var input struct {
+		Title  string     `json:"title"`
+		Year   int32      `json:"year"`
+		Pages  data.Pages `json:"pages"`
+		Genres []string   `json:"genres"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	book := &data.Book{
+		Title:  input.Title,
+		Year:   input.Year,
+		Pages:  input.Pages,
+		Genres: input.Genres,
+	}
+
+	v := validator.New()
+
+	if data.ValidateBooks(v, book); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	fmt.Fprintf(w, "%+v\n", input)
+
 	//
 	//comics := &data.Comics{
 	//	Title: input.Title,
@@ -51,8 +76,6 @@ func (app *application) createBookHandler(w http.ResponseWriter, r *http.Request
 	//
 	//fmt.Fprintf(w, "%+v\n", input)
 
-	fmt.Fprintln(w, "create a new book")
-
 }
 
 func (app *application) showBookHandler(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +102,6 @@ func (app *application) showBookHandler(w http.ResponseWriter, r *http.Request) 
 	//	app.serverErrorResponse(w, r, err)
 	//}
 
-
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFoundResponse(w, r)
@@ -87,12 +109,12 @@ func (app *application) showBookHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	book := data.Book{
-		ID: id,
+		ID:        id,
 		CreatedAt: time.Now(),
-		Title: "Casablanca",
-		Pages: 102,
-		Genres: []string{"drama", "romance", "war"},
-		Version: 1,
+		Title:     "Casablanca",
+		Pages:     102,
+		Genres:    []string{"drama", "romance", "war"},
+		Version:   1,
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"book": book}, nil)

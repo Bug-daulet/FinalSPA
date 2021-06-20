@@ -199,13 +199,13 @@ func (app *application) listBooksHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	books, err := app.models.Books.GetAll(input.Title, input.Genres, input.Filters)
+	books, metadata, err := app.models.Books.GetAll(input.Title, input.Genres, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"books": books}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"metadata": metadata, "books": books}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

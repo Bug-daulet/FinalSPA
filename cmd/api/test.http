@@ -2,7 +2,7 @@ GET http://localhost:4000/v1/books
 
 ###
 
-GET http://localhost:4000/v1/books/645
+GET http://localhost:4000/v1/books/3
 
 ###
 
@@ -23,18 +23,18 @@ Content-Type: application/json
 {
   "title": "Sapiens: A Brief History of Humankind",
   "year": 2011,
-  "pages": 443,
+  "pages": "443 pages",
   "genres":["Non-fiction"]
 }
 ###
 
-PUT http://localhost:4000/v1/books/4
+PATCH http://localhost:4000/v1/books/4
 Content-Type: application/json
 
 {
   "title": "Sapiens: A Brief History of Humankind",
   "year": 2011,
-  "pages": 444,
+  "pages": "444 pages",
   "genres":["Non-fiction"]
 }
 ###

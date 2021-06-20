@@ -1,4 +1,4 @@
-GET http://localhost:4000/v1/books/645
+GET http://localhost:4000/v1/books/1
 
 ###
 GET http://localhost:4000/v1/healthcheck
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 ###
 
-PUT http://localhost:4000/v1/books/4
+PATCH http://localhost:4000/v1/books/1
 Content-Type: application/json
 
 {
@@ -27,5 +27,7 @@ Content-Type: application/json
 }
 ###
 
-DELETE http://localhost:4000/v1/books/4
+DELETE http://localhost:4000/v1/books/2
+
+###
 

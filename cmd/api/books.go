@@ -99,10 +99,10 @@ func (app *application) updateBookHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	var input struct {
-		Title  string     `json:"title"`
-		Year   int32      `json:"year"`
-		Pages  data.Pages `json:"pages"`
-		Genres []string   `json:"genres"`
+		Title  *string     `json:"title"`
+		Year   *int32      `json:"year"`
+		Pages  *data.Pages `json:"pages"`
+		Genres []string    `json:"genres"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -111,23 +111,36 @@ func (app *application) updateBookHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	book.Title = input.Title
-	book.Year = input.Year
-	book.Pages = input.Pages
-	book.Genres = input.Genres
+	if input.Title != nil {
+		book.Title = *input.Title
+	}
+
+	if input.Year != nil {
+		book.Year = *input.Year
+	}
+	if input.Pages != nil {
+		book.Pages = *input.Pages
+	}
+	if input.Genres != nil {
+		book.Genres = input.Genres
+	}
 
 	v := validator.New()
+
 	if data.ValidateBooks(v, book); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
-
 	err = app.models.Books.Update(book)
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
 		return
 	}
-
 	err = app.writeJSON(w, http.StatusOK, envelope{"book": book}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

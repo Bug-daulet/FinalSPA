@@ -154,29 +154,9 @@ func (app *application) deleteBookHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// Return a 200 OK status code along with a success message.
 	err = app.writeJSON(w, http.StatusOK, envelope{"message": "book successfully deleted"}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
 
 }
-
-/*func (app *application) showAllComicsHandler(w http.ResponseWriter, r *http.Request) {
-
-	comics, err := app.models.Books.GetAll()
-	if err != nil {
-		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
-			app.notFoundResponse(w, r)
-		default:
-			app.serverErrorResponse(w, r, err)
-		}
-		return
-	}
-
-	err = app.writeJSON(w, http.StatusOK, envelope{"comics": comics}, nil)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-	}
-}*/

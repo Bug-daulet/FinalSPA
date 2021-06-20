@@ -25,4 +25,7 @@ Content-Type: application/json
   "pages": 444,
   "genres":["Non-fiction"]
 }
+###
+
+DELETE http://localhost:4000/v1/books/4
 

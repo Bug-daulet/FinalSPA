@@ -1,10 +1,22 @@
-GET http://localhost:4000/v1/books/1
+GET http://localhost:4000/v1/books
 
 ###
+
+GET http://localhost:4000/v1/books/645
+
+###
+
+
+GET http://localhost:4000/v1/books?genres=fiction
+
+###
+
+
 GET http://localhost:4000/v1/healthcheck
 
 
 ###
+
 POST http://localhost:4000/v1/books
 Content-Type: application/json
 
@@ -16,7 +28,7 @@ Content-Type: application/json
 }
 ###
 
-PATCH http://localhost:4000/v1/books/1
+PUT http://localhost:4000/v1/books/4
 Content-Type: application/json
 
 {
@@ -27,7 +39,7 @@ Content-Type: application/json
 }
 ###
 
-DELETE http://localhost:4000/v1/books/2
 
-###
+
+DELETE http://localhost:4000/v1/books/3
 

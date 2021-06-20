@@ -1,0 +1,14 @@
+GET http://localhost:4000/v1/books/2
+
+###
+GET http://localhost:4000/v1/healthcheck
+
+
+###
+POST http://localhost:4000/v1/books
+Content-Type: application/json
+
+{}
+
+###
+

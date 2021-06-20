@@ -1,9 +1,80 @@
 package data
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/Bug-daulet/FinalSPA/internal/validator"
+	"github.com/lib/pq"
 	"time"
 )
+
+type BookModel struct {
+	DB *sql.DB
+}
+
+func (b BookModel) Insert(book *Book) error {
+	query := `INSERT INTO books (title, year, pages, genres)
+				VALUES ($1, $2, $3, $4)
+				RETURNING id, created_at, version`
+
+	args := []interface{}{book.Title, book.Year, book.Pages, pq.Array(book.Genres)}
+
+	return b.DB.QueryRow(query, args...).Scan(&book.ID, &book.CreatedAt, &book.Version)
+
+}
+
+func (b BookModel) Get(id int64) (*Book, error) {
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
+	query := `SELECT id, created_at, title, year, pages, genres, version
+				FROM books
+				WHERE id = $1`
+
+	var book Book
+
+	err := b.DB.QueryRow(query, id).Scan(
+		&book.ID,
+		&book.CreatedAt,
+		&book.Title,
+		&book.Year,
+		&book.Pages,
+		pq.Array(&book.Genres),
+		&book.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &book, nil
+
+}
+func (b BookModel) Update(book *Book) error {
+	query := `UPDATE books
+				SET title = $1, year = $2, pages = $3, genres = $4, version = version + 1
+				WHERE id = $5
+				RETURNING version`
+	// Create an args slice containing the values for the placeholder parameters.
+	args := []interface{}{
+		book.Title,
+		book.Year,
+		book.Pages,
+		pq.Array(book.Genres),
+		book.ID,
+	}
+
+	return b.DB.QueryRow(query, args...).Scan(&book.Version)
+}
+
+func (b BookModel) Delete(id int64) error {
+	return nil
+}
 
 type Book struct {
 	ID        int64     `json:"id"`

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Bug-daulet/FinalSPA/internal/data"
 	_ "github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -31,6 +32,7 @@ type config struct {
 type application struct {
 	config config
 	logger *log.Logger
+	models data.Models
 }
 
 func main() {
@@ -75,7 +77,7 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
-		//models: data.NewModels(db),
+		models: data.NewModels(db),
 	}
 
 	srv := &http.Server{
